@@ -5,4 +5,4 @@ pub const CONFIG_PATH: &str = "/etc/mistral-cli/config.json";
 
 pub const DEFAULT_MODEL: &str = "mistral-tiny";
 pub const DEFAULT_OCR_MODEL: &str = "mistral-ocr-latest";
-pub const DEFAULT_VISION_MODEL: &str = "pixtral-12b-2409";
+pub const DEFAULT_VISION_MODEL: &str = "pixtral-12b-latest";
