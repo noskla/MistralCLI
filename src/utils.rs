@@ -1,6 +1,6 @@
 use crate::config::get_api_key;
 use crate::constants::MISTRAL_API_URL;
-use crate::types::{MessageRole, MistralApiResponse, MistralRequestBody};
+use crate::types::{MessageRole, MistralApiResponse, MistralRequestBody, ModelListResponse};
 use futures::stream::StreamExt;
 use indicatif::{ProgressBar, ProgressStyle};
 use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION};
@@ -75,4 +75,27 @@ pub async fn make_mistral_request(
     println!();
 
     Ok(())
+}
+
+pub async fn list_models(api_key: &str) -> Result<ModelListResponse, Box<dyn Error>> {
+    let client = reqwest::Client::new();
+    let url = "https://api.mistral.ai/v1/models";
+    let headers = HeaderMap::from_iter(vec![(
+        AUTHORIZATION,
+        HeaderValue::from_str(&format!("Bearer {}", api_key))?,
+    )]);
+
+    let response = client
+        .get(url)
+        .headers(headers)
+        .send()
+        .await?;
+
+    if response.status().is_success() {
+        let body = response.text().await?;
+        let models: ModelListResponse = serde_json::from_str(&body)?;
+        Ok(models)
+    } else {
+        Err("Failed to fetch models".into())
+    }
 }

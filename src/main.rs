@@ -4,8 +4,9 @@ mod types;
 mod utils;
 
 use crate::constants::DEFAULT_MODEL;
-use crate::utils::make_mistral_request;
+use crate::utils::{make_mistral_request, list_models};
 use std::{env, error::Error};
+use chrono::DateTime;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -19,7 +20,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let prompt: String;
 
     if args.len() < 2 {
-        eprintln!("Usage: mistral [-c config_path] [-m model_name] <prompt>");
+        eprintln!("Usage: mistral [-c config_path] [-m model_name] [-l] <prompt>");
         return Err("Invalid arguments".into());
     }
 
@@ -43,6 +44,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     eprintln!("Missing value for -m option");
                     return Err("Invalid arguments".into());
                 }
+            }
+            "-l" => {
+                let api_key = crate::config::get_api_key(config_path)?;
+                let models = list_models(&api_key).await?;
+                for model in models.data {
+                    let created_date = DateTime::from_timestamp(model.created as i64, 0)
+                        .map(|dt| dt.format("%Y-%m-%d").to_string())
+                        .unwrap_or_else(|| "Unknown".to_string());
+                    println!("{}: {} (created: {})", model.id, model.object, created_date);
+                }
+                return Ok(());
             }
             _ => break,
         }

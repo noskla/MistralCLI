@@ -27,3 +27,17 @@ pub struct MistralRequestBody {
     pub messages: Vec<MessageRole>,
     pub stream: bool,
 }
+
+#[derive(Deserialize, Debug)]
+pub struct ModelListResponse {
+    pub object: String,
+    pub data: Vec<Model>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct Model {
+    pub id: String,
+    pub object: String,
+    pub created: u64,
+    pub owned_by: String,
+}
