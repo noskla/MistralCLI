@@ -2,9 +2,12 @@ mod config;
 mod constants;
 mod types;
 mod utils;
+mod ocr;
+mod vision;
+mod misc;
 
 use crate::constants::DEFAULT_MODEL;
-use crate::utils::{make_mistral_request, list_models};
+use crate::utils::{make_mistral_request, list_models, handle_file_upload};
 use std::{env, error::Error};
 use chrono::DateTime;
 
@@ -17,10 +20,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let mut model = DEFAULT_MODEL.to_string();
     let mut config_path: Option<&str> = None;
+    let mut file_path: Option<&str> = None;
     let prompt: String;
 
     if args.len() < 2 {
-        eprintln!("Usage: mistral [-c config_path] [-m model_name] [-l] <prompt>");
+        eprintln!("Usage: mistral [-c config_path] [-m model_name] [-l] [-f file_path] <prompt>");
         return Err("Invalid arguments".into());
     }
 
@@ -42,6 +46,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     i += 2;
                 } else {
                     eprintln!("Missing value for -m option");
+                    return Err("Invalid arguments".into());
+                }
+            }
+            "-f" => {
+                if i + 1 < args.len() {
+                    file_path = Some(&args[i + 1]);
+                    i += 2;
+                } else {
+                    eprintln!("Missing value for -f option");
                     return Err("Invalid arguments".into());
                 }
             }
@@ -70,7 +83,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .timeout(std::time::Duration::from_secs(30))
         .build()?;
 
-    make_mistral_request(&client, &model, &prompt, config_path).await?;
+    if let Some(file_path) = file_path {
+        handle_file_upload(&client, &model, file_path, &prompt, config_path).await?;
+    } else {
+        make_mistral_request(&client, &model, &prompt, config_path).await?;
+    }
 
     Ok(())
 }

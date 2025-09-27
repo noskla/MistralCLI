@@ -18,7 +18,7 @@ pub struct Delta {
 #[derive(Serialize)]
 pub struct MessageRole {
     pub role: String,
-    pub content: String,
+    pub content: serde_json::Value,
 }
 
 #[derive(Serialize)]
