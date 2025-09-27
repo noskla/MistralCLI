@@ -1,19 +1,22 @@
+use crate::config::get_api_key;
 use crate::constants::MISTRAL_API_URL;
 use crate::types::{MessageRole, MistralApiResponse, MistralRequestBody};
 use futures::stream::StreamExt;
 use indicatif::{ProgressBar, ProgressStyle};
 use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION};
 use std::io::{self, Write};
-use std::{env, error::Error};
+use std::{error::Error};
 
 pub async fn make_mistral_request(
     client: &reqwest::Client,
     model: &str,
     prompt: &str,
+    config_path: Option<&str>,
 ) -> Result<(), Box<dyn Error>> {
+    let api_key = get_api_key(config_path)?;
     let headers = HeaderMap::from_iter(vec![(
         AUTHORIZATION,
-        HeaderValue::from_str(&format!("Bearer {}", env::var("MISTRAL_API_KEY")?))?,
+        HeaderValue::from_str(&format!("Bearer {}", api_key))?,
     )]);
     let spinner = ProgressBar::new_spinner();
     spinner.set_style(
