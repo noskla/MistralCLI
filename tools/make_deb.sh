@@ -4,7 +4,7 @@
 PACKAGE_NAME="mistral-cli"
 VERSION="0.1.1"
 ARCHITECTURE="amd64"
-MAINTAINER="noskla <m-cli.unreached633@passinbox.com>"
+MAINTAINER="noskla <m-cli.unreached633@passinbox.com>, aumbriac"
 DESCRIPTION="mistral-cli - Rust CLI for Mistral AI API"
 BUILD_DIR="build"
 PACKAGE_DIR="$BUILD_DIR/$PACKAGE_NAME"
