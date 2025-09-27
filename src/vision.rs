@@ -1,4 +1,4 @@
-use crate::config::{get_api_key, get_preferred_model};
+use crate::config::get_api_key;
 use crate::constants::{MISTRAL_API_URL, DEFAULT_VISION_MODEL};
 use crate::types::{MessageRole, MistralRequestBody};
 use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION};

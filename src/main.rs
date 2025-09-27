@@ -24,7 +24,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let prompt: String;
 
     if args.len() < 2 {
-        eprintln!("Usage: mistral [-c config_path] [-m model_name] [-l] [-f file_path] <prompt>");
+        print_help();
         return Err("Invalid arguments".into());
     }
 
@@ -69,6 +69,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 }
                 return Ok(());
             }
+            "-h" => {
+                print_help();
+                return Ok(());
+            }
             _ => break,
         }
     }
@@ -90,4 +94,16 @@ async fn main() -> Result<(), Box<dyn Error>> {
     }
 
     Ok(())
+}
+
+
+fn print_help() {
+    eprintln!("Usage: mistral [-c config_path] [-m model_name] [-l] [-f file_path] [-h] <prompt>");
+    eprintln!("\nOptions:");
+    eprintln!("  -c config_path  Path to the configuration file");
+    eprintln!("  -m model_name   Name of the model to use");
+    eprintln!("  -l              List available models");
+    eprintln!("  -f file_path    Path to a file to upload");
+    eprintln!("  -h              Show this help message");
+    eprintln!("\n<prompt>          The prompt to send to the model");
 }
